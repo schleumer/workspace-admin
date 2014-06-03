@@ -1,0 +1,11 @@
+{
+	"services": [
+		{
+			"name": "mysqld",
+			"alias": "MySQL"
+		}, {
+			"name": "apache2.4",
+			"alias": "Apache"
+		}
+	]
+}

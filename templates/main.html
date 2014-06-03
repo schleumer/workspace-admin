@@ -1,0 +1,11 @@
+<div class="row-fluid">
+	<div class="col-xs-4" ng-repeat="service in settings.services">
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<div><b>{{service.alias}}</b></div>
+				<yay:service-status name="service.name"></yay:service-status>
+				<yay:service-switch name="service.name"></yay:service-switch>
+			</div>
+		</div>
+	</div>
+</div>
