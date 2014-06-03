@@ -1,4 +1,4 @@
-var spawn = require('child_process').spawn;
+var exec = require('child_process').exec;
 var iconv = require('iconv-lite');
 var removeDiacritics = require('diacritics').remove;
 
@@ -34,42 +34,54 @@ app.directive("yayServiceStatus", function() {
 		templateUrl: 'templates/directives/service-status.html',
 		link: function yayServiceStatusLink(scope, element, attrs) {
 			scope.status = "Off-line";
-			var status = spawn('wmic'/*, ['\/locale:ms_409', "service", "where", '(name=' + scope.name + ')', "list", '\/format:list']*/);
-			status.stderr.on('data', function (data) {
-  				alert(data);
+			var conditions = scope.name.split(',').map(function(v){
+				return "name='" + v + "'";
 			});
-			var first = true;
-			status.stdout.on('data', function(data) {
-				if(first){
-					first = false;
-					status.stdin.write('/locale:ms_409 service where name="' + scope.name + '" list /format:list\n');
-					status.stdin.end();
-				} else {
-					data = removeDiacritics(iconv.decode(data, "cp850").toString());
-					data = data.split(/\r\n|\r|\n/g)
-					data = data.filter(function(v) {
-						return /=/g.test(v);
-					});
-					data = data.map(function(d) {
-						var keyValue = d.split("=");
-						return {
-							key: keyValue[0],
-							value: keyValue[1]
-						}
-					})
-					otherdata = {};
-					data.forEach(function(v, k){
-						otherdata[v.key] = v.value;
-					})
-					scope.status = otherdata;
-					scope.$apply();
-					try {
-						status.kill();
-					} catch (ex) {
-						console.log(ex);
-					}
-				}
+			alert(conditions);
+			var status = exec('wmic /locale:ms_409 service where (' + conditions.join(' or ') + ') list /format:csv', function(error, stdout, stderr){
+				console.log(stdout);
+				status.kill();
 			});
+			//status.stderr.on('data', function (data) {
+  			//	alert(data);
+			//});
+			//var first = true;
+			//var content = "";
+			//status.stdout.on('data', function(data) {
+			//	if(first){
+			//		first = false;
+			//		status.stdin.write('/locale:ms_409 service where name="' + scope.name + '" list /format:csv\n');
+			//		status.stdin.end();
+			//	} else {
+			//		content += data.toString() + "\n";
+			//		//data = removeDiacritics(iconv.decode(data, "cp850").toString());
+			//		//data = data.split(/\r\n|\r|\n/g)
+			//		//data = data.filter(function(v) {
+			//		//	return /=/g.test(v);
+			//		//});
+			//		//data = data.map(function(d) {
+			//		//	var keyValue = d.split("=");
+			//		//	return {
+			//		//		key: keyValue[0],
+			//		//		value: keyValue[1]
+			//		//	}
+			//		//})
+			//		//otherdata = {};
+			//		//data.forEach(function(v, k){
+			//		//	otherdata[v.key] = v.value;
+			//		//})
+			//		//scope.status = otherdata;
+			//		//scope.$apply();
+			//		//try {
+			//		//	status.kill();
+			//		//} catch (ex) {
+			//		//	console.log(ex);
+			//		//}
+			//	}
+			//});
+			//status.stdout.on('close', function(){
+			//	console.log(content);
+			//});
 		}
 	}
 });

@@ -17,6 +17,7 @@
   "author": "Me",
   "license": "IDGASF",
   "dependencies": {
+    "csv": "^0.4.0",
     "diacritics": "^1.1.0",
     "iconv-lite": "^0.2.11"
   }

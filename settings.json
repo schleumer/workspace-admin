@@ -1,4 +1,10 @@
 {
+	"profiles": [
+		{
+			"name": "Perfil 1",
+			"services": ["mysqld", "apache2.4"]
+		}
+	],
 	"services": [
 		{
 			"name": "mysqld",
